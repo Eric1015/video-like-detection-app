@@ -2,7 +2,7 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import UIfx from 'uifx';
 
-import joyImage from '../../images/joy.jpg';
+import joyImage from '../../images/joy.png';
 const sound = require('../../sound/shortCircuit.mp3');
 
 const fadeInUpAnimation = keyframes`

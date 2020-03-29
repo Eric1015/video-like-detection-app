@@ -3,7 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import UIfx from 'uifx';
 
 import angryImage from '../../images/angry.png';
-const sound = require('../../sound/shortCircuit.mp3');
+const sound = require('../../sound/backgroundSound.wav');
 
 const fadeInUpAnimation = keyframes`
   from {

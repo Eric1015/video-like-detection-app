@@ -8,6 +8,7 @@ import SurpriseFace from '../../components/SurpriseFace/SurpriseFace';
 import JoyFace from '../../components/JoyFace/JoyFace';
 import AngryFace from '../../components/AngryFace/AngryFace';
 import { reactions } from '../../constants';
+import UpIcon from '../UpIcon/UpIcon';
 
 interface ParticipantProps {
   participant: LocalParticipant | RemoteParticipant;
@@ -28,6 +29,7 @@ export default function Participant({
   const [showSurprise, setShowSurprise] = useState(false);
   const [showJoy, setShowJoy] = useState(false);
   const [showAngry, setShowAngry] = useState(false);
+  const [showUp, setShowUp] = useState(false);
 
   useEffect(() => {
     const db = firebase.firestore();
@@ -50,6 +52,10 @@ export default function Participant({
                   setShowAngry(true);
                   setTimeout(() => setShowAngry(false), 2000);
                   break;
+                case reactions.UP:
+                  setShowUp(true);
+                  setTimeout(() => setShowUp(false), 2000);
+                  break;
               }
             }
           }
@@ -63,6 +69,7 @@ export default function Participant({
       {showSurprise ? <SurpriseFace /> : <div></div>}
       {showJoy ? <JoyFace /> : <div></div>}
       {showAngry ? <AngryFace /> : <div></div>}
+      {showUp ? <UpIcon /> : <div></div>}
     </ParticipantInfo>
   );
 }

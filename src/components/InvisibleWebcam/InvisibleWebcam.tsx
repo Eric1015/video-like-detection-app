@@ -8,10 +8,12 @@ import AngryFace from '../AngryFace/AngryFace';
 
 import './InvisibleWebcam.css';
 import { isSurpriseFace, isJoyFace, isAngryFace } from '../../helpers/faceDetectionHelper';
+import { getVisionAPIResult, getThumbsupResult } from '../../helpers/requestsHelper';
 import { isIterable } from '../../helpers/general';
 import firebase from '../../firebase';
 import { useAppState } from '../../state';
 import { reactions } from '../../constants';
+import UpIcon from '../UpIcon/UpIcon';
 
 function InvisibleWebcam() {
   const videoConstraints = {
@@ -26,41 +28,38 @@ function InvisibleWebcam() {
 
   const capture = async () => {
     const imageSrc = webcamRef.current.getScreenshot();
-    let body = JSON.stringify({
-      requests: [
-        {
-          features: [
-            // { type: "LABEL_DETECTION", maxResults: 10 },
-            // { type: "LANDMARK_DETECTION", maxResults: 5 },
-            { type: 'FACE_DETECTION', maxResults: 5 },
-            // { type: "LOGO_DETECTION", maxResults: 5 },
-            // { type: "TEXT_DETECTION", maxResults: 5 },
-            // { type: "DOCUMENT_TEXT_DETECTION", maxResults: 5 },
-            // { type: "SAFE_SEARCH_DETECTION", maxResults: 5 },
-            // { type: "IMAGE_PROPERTIES", maxResults: 5 },
-            // { type: "CROP_HINTS", maxResults: 5 },
-            // { type: "WEB_DETECTION", maxResults: 5 }
-          ],
-          image: {
-            content: imageSrc ? imageSrc.substring(imageSrc.indexOf(',') + 1) : imageSrc,
-          },
-        },
-      ],
-    });
-    let response = await fetch(
-      'https://vision.googleapis.com/v1/images:annotate?key=' + process.env.REACT_APP_VISION_API_KEY,
-      {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: body,
+    const visionResult = await getVisionAPIResult(imageSrc);
+    const thumbsupResult = await getThumbsupResult(imageSrc);
+
+    if (!thumbsupResult.hasOwnProperty('error') && isIterable(thumbsupResult.payload)) {
+      for (let result of thumbsupResult.payload) {
+        if (
+          (result.displayName === 'up' ||
+            result.displayName === 'ok' ||
+            result.displayName === 'two' ||
+            result.displayName === 'raise') &&
+          result.classification.score > 0.9
+        ) {
+          setShowUp(true);
+          setTimeout(() => setShowUp(false), 2000);
+          const db = firebase.firestore();
+          db.collection('users')
+            .doc(userDocId)
+            .update({
+              reaction: reactions.UP,
+            });
+          db.collection('users')
+            .doc(userDocId)
+            .update({
+              reaction: reactions.IDLE,
+            });
+          break;
+        }
       }
-    );
-    let res = await response.json();
-    if (!res.hasOwnProperty('error') && isIterable(res.responses)) {
-      for (let result of res.responses) {
+    }
+
+    if (!visionResult.hasOwnProperty('error') && isIterable(visionResult.responses)) {
+      for (let result of visionResult.responses) {
         if (isIterable(result.faceAnnotations)) {
           for (let faceAnnotation of result.faceAnnotations) {
             if (isSurpriseFace(faceAnnotation)) {
@@ -104,7 +103,7 @@ function InvisibleWebcam() {
               db.collection('users')
                 .doc(userDocId)
                 .update({
-                  reaction: reactions.JOY,
+                  reaction: reactions.ANGRY,
                 });
               db.collection('users')
                 .doc(userDocId)
@@ -150,6 +149,8 @@ function InvisibleWebcam() {
 
   const [showAngry, setShowAngry] = useState(false);
 
+  const [showUp, setShowUp] = useState(false);
+
   useInterval(capture, 1000);
 
   return (
@@ -166,6 +167,7 @@ function InvisibleWebcam() {
       {showSurprise ? <SurpriseFace /> : <div></div>}
       {showJoy ? <JoyFace /> : <div></div>}
       {showAngry ? <AngryFace /> : <div></div>}
+      {showUp ? <UpIcon /> : <div></div>}
     </div>
   );
 }

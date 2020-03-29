@@ -3,4 +3,5 @@ export const reactions = {
   IDLE: 'IDLE',
   JOY: 'JOY',
   SURPRISE: 'SURPRISE',
+  UP: 'UP',
 };

@@ -83,21 +83,6 @@ export default function MenuBar() {
         reaction: reactions.IDLE,
       });
       setUserDocId(res.id);
-      db.collection('users')
-        .where('roomName', '==', roomName)
-        .onSnapshot(snapshot => {
-          snapshot.docChanges().forEach(function(change) {
-            if (change.type === 'added') {
-              console.log('New user: ', change.doc.data());
-            }
-            if (change.type === 'modified') {
-              console.log('Modified user: ', change.doc.data());
-            }
-            if (change.type === 'removed') {
-              console.log('Removed user: ', change.doc.data());
-            }
-          });
-        });
     });
   };
 

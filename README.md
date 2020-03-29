@@ -1,3 +1,13 @@
+# Livemoji
+
+This is a web application created for LAhacks 2020.
+
+The application will detect your face and show up the emoji depending on your facial expression.
+
+You can find the devpost about this website [here](https://devpost.com/software/livemoji)
+
+*** The following explanation will be about the original app of this (where we forked) ***
+
 # Twilio Video React App
 
 [![CircleCI](https://circleci.com/gh/twilio/twilio-video-app-react.svg?style=svg)](https://circleci.com/gh/twilio/twilio-video-app-react)

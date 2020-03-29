@@ -81,7 +81,7 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run --browser chrome",
     "cypress:ci": "cross-env CYPRESS_baseUrl=http://localhost:8000 start-server-and-test server http://localhost:8000 cypress:run",
-    "deploy:twilio-cli": "cross-env REACT_APP_SET_AUTH=passcode npm run build && twilio rtc:apps:video:deploy --authentication=passcode --app-directory ./build"
+    "deploy:twilio-cli": "cross-env REACT_APP_VISION_API_KEY=AIzaSyAuYY5D6lpBXF6FrjDbda_3t-tSCQlFNJI REACT_APP_FIREBASE_API_KEY=AIzaSyDOZ9TK9eSQDT34UujKqrKelI8nnoASe54 REACT_APP_FIREBASE_AUTH_DOMAIN=video-like-detection-db.firebaseapp.com REACT_APP_FIREBASE_DATABASE_URL=https://video-like-detection-db.firebaseio.com REACT_APP_FIREBASE_STORAGE_BUCKET=video-like-detection-db.appspot.com REACT_APP_FIREBASE_MESSAGING_SENDER_ID=1059879241205 REACT_APP_SET_AUTH=passcode npm run build && twilio rtc:apps:video:deploy --authentication=passcode --app-directory ./build"
   },
   "eslintConfig": {
     "extends": "react-app",

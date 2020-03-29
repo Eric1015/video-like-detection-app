@@ -3,9 +3,11 @@ import Webcam from 'react-webcam';
 // import vision from 'react-cloud-vision-api';
 import useInterval from 'use-interval';
 import SurpriseFace from '../SurpriseFace/SurpriseFace';
+import JoyFace from '../JoyFace/JoyFace';
+import AngryFace from '../AngryFace/AngryFace';
 
 import './InvisibleWebcam.css';
-import { isSurpriseFace } from '../../helpers/faceDetectionHelper';
+import { isSurpriseFace, isJoyFace, isAngryFace } from '../../helpers/faceDetectionHelper';
 import { isIterable } from '../../helpers/general';
 
 function InvisibleWebcam() {
@@ -59,6 +61,21 @@ function InvisibleWebcam() {
             if (isSurpriseFace(faceAnnotation)) {
               setShowSurprise(true);
               setTimeout(() => setShowSurprise(false), 2000);
+
+              break;
+            }
+
+            if (isJoyFace(faceAnnotation)) {
+              setShowJoy(true);
+              setTimeout(() => setShowJoy(false), 2000);
+
+              break;
+            }
+
+            if (isAngryFace(faceAnnotation)) {
+              setShowAngry(true);
+              setTimeout(() => setShowAngry(false), 2000);
+
               break;
             }
           }
@@ -94,6 +111,10 @@ function InvisibleWebcam() {
 
   const [showSurprise, setShowSurprise] = useState(false);
 
+  const [showJoy, setShowJoy] = useState(false);
+
+  const [showAngry, setShowAngry] = useState(false);
+
   useInterval(capture, 1000);
 
   return (
@@ -108,6 +129,8 @@ function InvisibleWebcam() {
         className="webcamera"
       />
       {showSurprise ? <SurpriseFace /> : <div></div>}
+      {showJoy ? <JoyFace /> : <div></div>}
+      {showAngry ? <AngryFace /> : <div></div>}
     </div>
   );
 }

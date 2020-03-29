@@ -2,7 +2,7 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import UIfx from 'uifx';
 
-import surpriseImage from '../../images/surprise_face.png';
+import joyImage from '../../images/joy.jpg';
 const sound = require('../../sound/shortCircuit.mp3');
 
 const fadeInUpAnimation = keyframes`
@@ -30,7 +30,7 @@ const FadeInUpDiv = styled.div`
 export default function SurpriseFace() {
   return (
     <FadeInUpDiv>
-      <img src={surpriseImage} onLoad={() => zz.play()} alt="" width="100px" height="100px" />
+      <img src={joyImage} onLoad={() => zz.play()} alt="" width="100px" height="100px" />
     </FadeInUpDiv>
   );
 }

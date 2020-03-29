@@ -15,6 +15,9 @@ import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { Typography } from '@material-ui/core';
 
+import firebase from '../../firebase';
+import { reactions } from '../../constants';
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
@@ -43,7 +46,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function MenuBar() {
   const classes = useStyles();
   const { URLRoomName } = useParams();
-  const { user, getToken, isFetching } = useAppState();
+  const { user, getToken, isFetching, userDocId, setUserDocId, setCurrentRoomName } = useAppState();
   const { isConnecting, connect } = useVideoContext();
   const roomState = useRoomState();
 
@@ -70,7 +73,32 @@ export default function MenuBar() {
     if (!window.location.origin.includes('twil.io')) {
       window.history.replaceState(null, '', window.encodeURI(`/room/${roomName}`));
     }
-    getToken(name, roomName).then(token => connect(token));
+    getToken(name, roomName).then(async token => {
+      connect(token);
+      setCurrentRoomName(roomName);
+      const db = firebase.firestore();
+      const res = await db.collection('users').add({
+        name: name,
+        roomName: roomName,
+        reaction: reactions.IDLE,
+      });
+      setUserDocId(res.id);
+      db.collection('users')
+        .where('roomName', '==', roomName)
+        .onSnapshot(snapshot => {
+          snapshot.docChanges().forEach(function(change) {
+            if (change.type === 'added') {
+              console.log('New user: ', change.doc.data());
+            }
+            if (change.type === 'modified') {
+              console.log('Modified user: ', change.doc.data());
+            }
+            if (change.type === 'removed') {
+              console.log('Removed user: ', change.doc.data());
+            }
+          });
+        });
+    });
   };
 
   return (

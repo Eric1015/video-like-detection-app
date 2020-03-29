@@ -7,6 +7,9 @@ import SurpriseFace from '../SurpriseFace/SurpriseFace';
 import './InvisibleWebcam.css';
 import { isSurpriseFace } from '../../helpers/faceDetectionHelper';
 import { isIterable } from '../../helpers/general';
+import firebase from '../../firebase';
+import { useAppState } from '../../state';
+import { reactions } from '../../constants';
 
 function InvisibleWebcam() {
   const videoConstraints = {
@@ -16,6 +19,8 @@ function InvisibleWebcam() {
   };
 
   const webcamRef: any = React.useRef(null);
+
+  const { userDocId } = useAppState();
 
   const capture = async () => {
     const imageSrc = webcamRef.current.getScreenshot();
@@ -59,6 +64,17 @@ function InvisibleWebcam() {
             if (isSurpriseFace(faceAnnotation)) {
               setShowSurprise(true);
               setTimeout(() => setShowSurprise(false), 2000);
+              const db = firebase.firestore();
+              db.collection('users')
+                .doc(userDocId)
+                .update({
+                  reaction: reactions.SURPRISE,
+                });
+              db.collection('users')
+                .doc(userDocId)
+                .update({
+                  reaction: reactions.IDLE,
+                });
               break;
             }
           }

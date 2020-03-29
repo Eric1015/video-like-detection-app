@@ -13,6 +13,10 @@ export interface StateContextType {
   signOut?(): Promise<void>;
   isAuthReady?: boolean;
   isFetching: boolean;
+  userDocId: string;
+  setUserDocId(id: string): void;
+  currentRoomName: string;
+  setCurrentRoomName(name: string): void;
 }
 
 export const StateContext = createContext<StateContextType>(null!);
@@ -29,11 +33,17 @@ export const StateContext = createContext<StateContextType>(null!);
 export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [error, setError] = useState<TwilioError | null>(null);
   const [isFetching, setIsFetching] = useState(false);
+  const [userDocId, setUserDocId] = useState('');
+  const [currentRoomName, setCurrentRoomName] = useState('');
 
   let contextValue = {
     error,
     setError,
     isFetching,
+    userDocId,
+    setUserDocId,
+    currentRoomName,
+    setCurrentRoomName,
   } as StateContextType;
 
   if (process.env.REACT_APP_SET_AUTH === 'firebase') {
